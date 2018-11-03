@@ -39,20 +39,33 @@ type Cmd struct {
 	} `usage:"show help"`
 }
 
+func getHomeDir() string {
+	usr, err := user.Current()
+	if err != nil {
+		panic(err)
+	}
+
+	return usr.HomeDir
+}
+
+func getSync() *Sync {
+	sync := &Sync{
+		Backend: &GistBackend{
+			GistID:      config.GistID,
+			GitHubToken: config.GithubToken,
+		},
+	}
+
+	return sync
+}
+
 func generateNewConfig() {
 	fmt.Print("Enter Gist ID: ")
 	fmt.Scanln(&config.GistID)
 	fmt.Print("Enter GitHub token: ")
 	fmt.Scanln(&config.GithubToken)
 
-	usr, err := user.Current()
-	if err != nil {
-		panic(err)
-	}
-
-	syncGist := SyncGist{
-		GistID: config.GistID,
-	}
+	syncGist := getSync()
 
 	fmt.Println(".. reading content of the gist")
 	syncGist.ReadRemote()
@@ -63,19 +76,14 @@ func generateNewConfig() {
 		panic(err)
 	}
 
-	err = ioutil.WriteFile(path.Join(usr.HomeDir, CONFIGFILE), content, 0600)
+	err = ioutil.WriteFile(path.Join(getHomeDir(), CONFIGFILE), content, 0600)
 	if err != nil {
 		panic(err)
 	}
 }
 
 func loadConfiguration() {
-	usr, err := user.Current()
-	if err != nil {
-		panic(err)
-	}
-
-	configFilepath := path.Join(usr.HomeDir, CONFIGFILE)
+	configFilepath := path.Join(getHomeDir(), CONFIGFILE)
 
 	content, err := ioutil.ReadFile(configFilepath)
 	if err != nil {
@@ -101,10 +109,7 @@ func main() {
 	//set.Help(false)
 	//fmt.Println()
 
-	syncGist := SyncGist{
-		GistID: config.GistID,
-		Files:  make(map[string]*SyncFile),
-	}
+	syncGist := getSync()
 
 	if cmd.Upload.Enable {
 		fmt.Println("Start uploading the config files")
@@ -127,19 +132,14 @@ func main() {
 
 		fmt.Println("New files")
 
-		usr, err := user.Current()
-		if err != nil {
-			panic(err)
-		}
-
 		for _, file := range cmd.Add.Files {
 			fullPath, err := filepath.Abs(file)
 			if err != nil {
 				panic(err)
 			}
 
-			if strings.HasPrefix(fullPath, usr.HomeDir) {
-				finalPath := strings.Trim(fullPath[len(usr.HomeDir):], "/")
+			if strings.HasPrefix(fullPath, getHomeDir()) {
+				finalPath := strings.Trim(fullPath[len(getHomeDir()):], "/")
 
 				fmt.Println(".. adding " + finalPath)
 				syncGist.Files[finalPath] = &SyncFile{
