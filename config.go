@@ -9,5 +9,4 @@ type Config struct {
 var config = &Config{
 	GistID:      "",
 	GithubToken: "",
-	///home/cx/.config/terminator/config /home/cx/.ssh/config /home/cx/.config/fish/config.fish /home/cx/.config/fish/functions/elxvpn.fish /home/cx/.vimrc /home/cx/.gitconfig /home/cx/.config/Slack/storage/slack-teams
 }
