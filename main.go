@@ -1,11 +1,8 @@
 package main
 
 import (
-	"encoding/json"
 	"fmt"
-	"io/ioutil"
 	"os/user"
-	"path"
 	"path/filepath"
 	"strings"
 
@@ -54,48 +51,10 @@ func getSync() *Sync {
 			GistID:      config.GistID,
 			GitHubToken: config.GithubToken,
 		},
+		Files: make(map[string]*SyncFile),
 	}
 
 	return sync
-}
-
-func generateNewConfig() {
-	fmt.Print("Enter Gist ID: ")
-	fmt.Scanln(&config.GistID)
-	fmt.Print("Enter GitHub token: ")
-	fmt.Scanln(&config.GithubToken)
-
-	syncGist := getSync()
-
-	fmt.Println(".. reading content of the gist")
-	syncGist.ReadRemote()
-
-	fmt.Println(".. saving list of files into the config along the ID and the token")
-	content, err := json.Marshal(config)
-	if err != nil {
-		panic(err)
-	}
-
-	err = ioutil.WriteFile(path.Join(getHomeDir(), CONFIGFILE), content, 0600)
-	if err != nil {
-		panic(err)
-	}
-}
-
-func loadConfiguration() {
-	configFilepath := path.Join(getHomeDir(), CONFIGFILE)
-
-	content, err := ioutil.ReadFile(configFilepath)
-	if err != nil {
-		generateNewConfig()
-		return
-	}
-
-	err = json.Unmarshal(content, &config)
-	if err != nil {
-		generateNewConfig()
-		return
-	}
 }
 
 func main() {
@@ -106,8 +65,6 @@ func main() {
 	set := flag.NewFlagSet(flag.Flag{})
 	set.StructFlags(&cmd)
 	set.Parse()
-	//set.Help(false)
-	//fmt.Println()
 
 	syncGist := getSync()
 

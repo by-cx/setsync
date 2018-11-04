@@ -36,6 +36,8 @@ func (d *DummyBackend) Write(files *map[string]*SyncFile) {
 }
 
 func TestSync(t *testing.T) {
+	config.EncryptionKey = "guexaipahngoojaghaeveoparairanga"
+
 	sync := Sync{
 		Backend: &DummyBackend{},
 	}

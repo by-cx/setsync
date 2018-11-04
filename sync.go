@@ -36,6 +36,19 @@ func (s *Sync) UpToDate() bool {
 // ReadRemote reads content of the files from the gist.
 func (s *Sync) ReadRemote() {
 	s.Files = *s.Backend.Read()
+
+	for key, file := range s.Files {
+		if len(file.Content) <= 12 {
+			s.Files[key].Content = ""
+		} else {
+			decryptedContent, err := decrypt(file.Content)
+			if err != nil {
+				panic(err)
+			}
+
+			s.Files[key].Content = string(decryptedContent)
+		}
+	}
 }
 
 // WriteLocal writes content of s.Files into the gist.
@@ -53,6 +66,14 @@ func (s *Sync) WriteLocal() {
 
 // WriteRemote writes content of s.Files into the gist.
 func (s *Sync) WriteRemote() {
+	for key, file := range s.Files {
+		encryptedContent, err := encrypt([]byte(file.Content))
+		if err != nil {
+			panic(err)
+		}
+		s.Files[key].Content = encryptedContent
+	}
+
 	s.Backend.Write(&s.Files)
 }
 
