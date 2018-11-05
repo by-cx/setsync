@@ -46,6 +46,6 @@ When you call *setsync help*, you will see this:
         list         list files saved in the gist
         help         show help
 
-Before you start *setsync* will ask you about GistID and your GitHub Token. To get a gist ID just create a new gist and use ID from the URL. GitHub Token menu is your [GitHub profile settings](https://github.com/settings/tokens).
+Before you start *setsync* will ask you about GistID, your GitHub Token and the encryption key. The encryption key needs to be 32 characters long. If you do something wrong, you can always update the configuration in *.setsync* file. To get a gist ID just create a new gist and use ID from the URL. GitHub Token menu is your [GitHub profile settings](https://github.com/settings/tokens).
 
 The upload and download has to be done manually so have this in mind when you update any "tracked" file in your local computer. To add new files use *add* commands. To pull configuration to the new computer or update the existing one use *download*. And if you change something call *upload*. Usually you have to turn off and on all affected application to load the new settings.

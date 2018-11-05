@@ -60,6 +60,4 @@ func loadConfiguration() {
 		generateNewConfig()
 		return
 	}
-
-	fmt.Println(config)
 }
