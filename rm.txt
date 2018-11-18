@@ -1,8 +1,0 @@
-go run . add ~/.config/fish/functions/elxvpn.fish
-go run . add ~/.ssh/config
-go run . add ~/.aws/config
-go run . add ~/.config/Slack/storage/slack-teams
-go run . add ~/.config/terminator/config
-go run . add ~/.gitconfig
-go run . add ~/.vimrc
-go run . add ~/.config/fish/config.fish
