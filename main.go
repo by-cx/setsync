@@ -1,6 +1,7 @@
 package main
 
 import (
+	"errors"
 	"fmt"
 	"os/user"
 	"path/filepath"
@@ -46,12 +47,27 @@ func getHomeDir() string {
 }
 
 func getSync() *Sync {
-	sync := &Sync{
-		Backend: &GistBackend{
+	var backend BackendInterface
+
+	if config.Mode == "gist" {
+		backend = &GistBackend{
 			GistID:      config.GistID,
 			GitHubToken: config.GithubToken,
-		},
-		Files: make(map[string]*SyncFile),
+		}
+	} else if config.Mode == "s3" {
+		backend = &S3Backend{
+			Endpoint:  config.S3Endpoint,
+			AccessKey: config.S3AccessKey,
+			SecretKey: config.S3SecretKey,
+			Bucket:    config.S3Bucket,
+		}
+	} else {
+		panic(errors.New("Error: unknown mode"))
+	}
+
+	sync := &Sync{
+		Backend: backend,
+		Files:   make(map[string]*SyncFile),
 	}
 
 	return sync
